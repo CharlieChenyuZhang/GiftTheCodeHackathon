@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sellers and Buyers</title>
+
+<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="css/datepicker3.css" rel="stylesheet">
+<link href="css/bootstrap-table.css" rel="stylesheet">
+<link href="css/styles.css" rel="stylesheet">
+<link href="css/brand.css" rel="stylesheet">
+<!--Icons-->
+<script src="js/lumino.glyphs.js"></script>
+
+<!--[if lt IE 9]>
+<script src="js/html5shiv.js"></script>
+<script src="js/respond.min.js"></script>
+<![endif]-->
+
+</head>
+
+<body>
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sidebar-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="Secondharvestdash.html"><span>Second</span>Harvest</a>
+				<ul class="user-menu">
+					<li class="dropdown pull-right">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><svg class="glyph stroked male-user"><use xlink:href="#stroked-male-user"></use></svg> User <span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a href="profile.html"><svg class="glyph stroked male-user"><use xlink:href="#stroked-male-user"></use></svg> Profile</a></li>
+							<li><a href="#"><svg class="glyph stroked gear"><use xlink:href="#stroked-gear"></use></svg> Settings</a></li>
+							<li><a href="#"><svg class="glyph stroked cancel"><use xlink:href="#stroked-cancel"></use></svg> Logout</a></li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+
+		</div><!-- /.container-fluid -->
+	</nav>
+
+	<div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
+		<form role="search">
+			<div class="form-group">
+				<input type="text" class="form-control" placeholder="Search">
+			</div>
+		</form>
+		<ul class="nav menu">
+			<li><a href="Secondharvestdash.html"> Dashboard</a></li>
+			<li><a href="raffles.html"> Current Raffles</a></li>
+			<li class="active"><a href="sellersandbuyers.html"> Buyers & Sellers</a></li>
+			<li><a href="addbuyers.html">Invite</a></li>
+		</ul>
+
+	</div>
+	<!--/.sidebar-->
+
+	<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+		<div class="row">
+			<ol class="breadcrumb">
+				<li><a href="#"><svg class="glyph stroked home"><use xlink:href="#stroked-home"></use></svg></a></li>
+				<li class="active">Raffles</li>
+			</ol>
+		</div><!--/.row-->
+
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header">Second Harvest Hero</h1>
+			</div>
+		</div><!--/.row-->
+
+
+		<div class="row">
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">Sellers</div>
+					<div class="panel-body">
+
+					<?php
+						function countTicketsDB($conn, $seller_id){
+						$sql = "SELECT COUNT(*) as NumberOfOrders FROM Tickets Where Tickets.Seller_ID='$seller_id'";
+						$result = $conn->query($sql);
+						$row = $result->fetch_assoc();
+						return $row['NumberOfOrders'];
+						}
+
+						function countConfirmedTicketsDB($conn, $seller_id){
+						$sql = "SELECT COUNT(*) as NumberOfOrders FROM Tickets WHERE Tickets.Confirmed=1 AND Tickets.Seller_ID = '$seller_id'";
+						$result = $conn->query($sql);
+						$row = $result->fetch_assoc();
+						return $row['NumberOfOrders'];
+						}
+
+						function totalValueSold($conn, $seller_id){
+						$sql = "select sum(price) as Totals from (Ticket_Type INNER JOIN Tickets ON
+						Tickets.Ticket_Type_ID=Ticket_Type.id and Tickets.Seller_Id = '$seller_id')";
+						$result = $conn->query($sql);
+						$row = $result->fetch_assoc();
+						return $row['Totals'];
+						}
+
+						/*MySQL Code*/
+						$servername = "localhost";
+						$username = "root";
+						$password = "test";
+						$dbname = "myDB";
+
+						// Create connection
+						$conn = new mysqli($servername, $username, $password, $dbname);
+
+						// Check connection
+						if ($conn->connect_error) {
+						  die("Connection failed: " . $conn->connect_error);
+						}
+						//echo "Connected successfully! <br>";
+
+						$sql = "SELECT * FROM Sellers";
+						$result = $conn->query($sql);
+						if ($result->num_rows > 0) {
+						  // output data of each rows
+						 ?><table><thead>
+							  <th data-field="name" data-sortable="true" >ID</th>
+  							  <th data-field="name" data-sortable="true" >First name</th>
+  							  <th data-field="Last_Name" data-sortable="true" >Surname</th>
+  							  <th data-field="Email" data-sortable="true">Email</th>
+  							  <th data-field="Email" data-sortable="true">Invitations Sent</th>
+  							  <th data-field="Email" data-sortable="true">Confirmed Tickets</th>
+  							  <th data-field="Email" data-sortable="true">Purchased Tickets</th>
+  							  <th data-field="Email" data-sortable="true">Value Sold</th>
+  							  <th data-field="Email" data-sortable="true">Address1</th>
+  							  <th data-field="Email" data-sortable="true">Address2</th>
+  							  <th data-field="Email" data-sortable="true">City</th>
+  							  <th data-field="Email" data-sortable="true">Province</th>
+ 							  <th data-field="Email" data-sortable="true">Postal Code</th>
+ 							  <th data-field="Email" data-sortable="true">Phone</th>
+ 							  <th data-field="Email" data-sortable="true">E-mail Contact</th>
+ 							  <th data-field="Email" data-sortable="true">Postal Contact</th>
+						 <?php
+						  while($row = $result->fetch_assoc()) {
+						 ?>
+						 <tr>
+						 	  <th><?php echo $row["id"] ?></th>
+							  <th><?php echo $row["FirstName"] ?></th>
+							  <th><?php echo $row["LastName"] ?></th>
+							  <th><?php echo $row["Email"] ?></th>
+							  <th><?php echo $row["Invites_Sent"] ?></th>
+							  <th><?php echo countTicketsDB($conn, $row["id"]) ?></th>
+							  <th><?php echo countConfirmedTicketsDB($conn, $row["id"]) ?></th>
+							  <th><?php echo totalValueSold($conn, $row["id"]) ?></th>
+							  <th><?php echo $row["Address1"] ?></th>
+							  <th><?php echo $row["Address2"] ?></th>
+							  <th><?php echo $row["City"] ?></th>
+							  <th><?php echo $row["Province"] ?></th>
+							  <th><?php echo $row["Postal_Code"] ?></th>
+							  <th><?php echo $row["Phone"] ?></th>
+							  <th><?php echo $row["Email_Contact"]  ?></th>
+							  <th><?php echo $row["Post_Contact"]  ?></th>
+						  </tr>
+						  <?php } ?>
+						  </thead>
+						  </table>
+					<?php
+						} else {
+						  echo "0 results";
+						}
+					?>
+						<button class="btn btn-primary btn-md" id="btn-todo">Add sellers</button>
+					</div>
+				</div>
+			</div>
+		</div><!--/.row-->
+
+		<div class="row">
+			<div class="col-md-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">Buyers</div>
+					<div class="panel-body">
+						<?php
+						function BuyerCountTicketsDB($conn, $buyer_id){
+						$sql = "SELECT COUNT(*) as NumberOfOrders FROM Tickets Where Tickets.Buyer_ID='$buyer_id'";
+						$result = $conn->query($sql);
+						$row = $result->fetch_assoc();
+						return $row['NumberOfOrders'];
+						}
+
+						function BuyerCountConfirmedTicketsDB($conn, $buyer_id){
+						$sql = "SELECT COUNT(*) as NumberOfOrders FROM Tickets WHERE Tickets.Confirmed=1 AND Tickets.Buyer_ID = '$buyer_id'";
+						$result = $conn->query($sql);
+						$row = $result->fetch_assoc();
+						return $row['NumberOfOrders'];
+						}
+
+						function BuyerTotalValueSold($conn, $buyer_id){
+						$sql = "select sum(price) as Totals from (Ticket_Type INNER JOIN Tickets ON
+						Tickets.Ticket_Type_ID=Ticket_Type.id and Tickets.Buyer_id = '$buyer_id')";
+						$result = $conn->query($sql);
+						$row = $result->fetch_assoc();
+						return $row['Totals'];
+						}
+
+						/*MySQL Code*/
+						$servername = "localhost";
+						$username = "root";
+						$password = "test";
+						$dbname = "myDB";
+
+						// Create connection
+						$conn = new mysqli($servername, $username, $password, $dbname);
+
+						// Check connection
+						if ($conn->connect_error) {
+						  die("Connection failed: " . $conn->connect_error);
+						}
+						//echo "Connected successfully! <br>";
+
+						$sql = "SELECT * FROM Buyers";
+						$result = $conn->query($sql);
+						if ($result->num_rows > 0) {
+						  // output data of each rows
+						 ?><table><thead>
+							<th data-field="ID" data-sortable="true" >ID</th>
+  							<th data-field="FirstName" data-sortable="true" >First Name</th>
+  							<th data-field="Last_Name" data-sortable="true" >Surname</th>
+  							<th data-field="Email" data-sortable="true">Email</th>
+							<th data-field="ConfirmedTickets"  data-sortable="true">Confirmed Tickets</th>
+							<th data-field="PurchasedTickets"  data-sortable="true">Purchased Tickets</th>
+							<th data-field="Value"  data-sortable="true">Value Bought</th>
+  							<th data-field="Address1" data-sortable="true">Address1</th>
+  							<th data-field="Address2" data-sortable="true">Address2</th>
+  							<th data-field="City" data-sortable="true">City</th>
+  							<th data-field="Province" data-sortable="true">Province</th>
+ 							<th data-field="PostalCode" data-sortable="true">Postal Code</th>
+ 							<th data-field="Phone" data-sortable="true">Phone</th>
+							<th data-field="Email_Contact" data-sortable="true">Email Contact</th>
+							<th data-field="Post_Contact" data-sortable="true">Post Contact</th>
+						 <?php
+						  while($row = $result->fetch_assoc()) {
+						 ?>
+						 <tr>
+						 	  <th><?php echo $row["id"] ?></th>
+							  <th><?php echo $row["FirstName"] ?></th>
+							  <th><?php echo $row["LastName"] ?></th>
+							  <th><?php echo $row["Email"] ?></th>
+							  <th><?php echo BuyerCountTicketsDB($conn, $row["id"]) ?></th>
+							  <th><?php echo BuyerCountConfirmedTicketsDB($conn, $row["id"]) ?></th>
+							  <th><?php echo BuyerTotalValueSold($conn, $row["id"]) ?></th>
+							  <th><?php echo $row["Address1"] ?></th>
+							  <th><?php echo $row["Address2"] ?></th>
+							  <th><?php echo $row["City"] ?></th>
+							  <th><?php echo $row["Province"] ?></th>
+							  <th><?php echo $row["Postal_Code"] ?></th>
+							  <th><?php echo $row["Phone"] ?></th>
+							  <th><?php echo $row["Email_Contact"]  ?></th>
+							  <th><?php echo $row["Post_Contact"]  ?></th>
+						  </tr>
+						  <?php } ?>
+						  </thead>
+						  </table>
+					<?php
+						} else {
+						  echo "0 results";
+						}
+					?>
+
+							    </tr>
+						    </thead>
+						</table>
+						<button class="btn btn-primary btn-md" id="btn-todo">Add buyers</button>
+						<a href="export.php" class="btn btn-primary btn-md" id="btn-todo">Export Data</a>
+					</div>
+				</div>
+			</div>
+		</div><!--/.row-->
+
+	</div><!--/.main-->
+
+	<script src="js/jquery-1.11.1.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/chart.min.js"></script>
+	<script src="js/chart-data.js"></script>
+	<script src="js/easypiechart.js"></script>
+	<script src="js/easypiechart-data.js"></script>
+	<script src="js/bootstrap-datepicker.js"></script>
+	<script src="js/bootstrap-table.js"></script>
+	<script>
+		!function ($) {
+			$(document).on("click","ul.nav li.parent > a > span.icon", function(){
+				$(this).find('em:first').toggleClass("glyphicon-minus");
+			});
+			$(".sidebar span.icon").find('em:first').addClass("glyphicon-plus");
+		}(window.jQuery);
+
+		$(window).on('resize', function () {
+		  if ($(window).width() > 768) $('#sidebar-collapse').collapse('show')
+		})
+		$(window).on('resize', function () {
+		  if ($(window).width() <= 767) $('#sidebar-collapse').collapse('hide')
+		})
+	</script>
+</body>
+
+</html>
